@@ -16,7 +16,7 @@
 - 🪞 **Double Standard (Hypocrisy) Meter & Contradiction Detector:** Includes a 3-question mirror test to measure double standards and a 22-rule contradiction engine that catches logical inconsistencies in your answers.
 - ⚔️ **VS Clash Mode & Relationship Oracle:** Generate a custom comparison link (`?c=`) to clash boundaries with your partner or friend, complete with a downloadable VS poster, harmony score, predicted relationship lifespan, and first-fight scenario.
 - 🎨 **6 Themes, 18 Named Colors & Perspective Selector:** Customize the atmosphere, horn colors, and pronoun/slang perspective (Neutral, Girlfriend, or Boyfriend).
-- 📤 **Multi-Format PNG Export:** Export your results as a full-size 35-item matrix poster, a 9:16 Instagram Story summary card, or a horizontal Official ID Card with an embedded dynamic QR code.
+- 📤 **Multi-Format PNG Export:** Export your results as a full-size 35-item matrix poster or a 9:16 Instagram Story summary card.
 - 💾 **Local Storage Only:** All responses stay securely in your browser's `localStorage`.
 
 ---
@@ -27,7 +27,7 @@
 2. ✍️ Enter your name/nickname, select your perspective, and customize the theme and horn color.
 3. 📋 Rate each scenario using the 8-point scale (`0–5`, `X` for dealbreakers, `?` for situational) and select any applicable condition tags.
 4. 🪞 Complete the optional 3-question Mirror Test to see your double standard stamp.
-5. 💾 Download your full poster, 9:16 Story card, or horizontal ID card, or copy your Clash Link to compare results with a partner.
+5. 💾 Download your full poster or 9:16 Story card, or copy your Clash Link to compare results with a partner.
 
 ---
 
@@ -81,7 +81,7 @@ Built upon the single-file Canvas and archetype engine architecture developed fo
 - 🪞 **Çifte Standart (İkiyüzlülük) Ölçer & Çelişki Dedektörü:** 3 soruluk Ayna Testi ile sevgiline koyduğun kurallarla kendine istediğin özgürlüğü kıyaslar; 22 kurallı Çelişki Dedektörü ile yanıtların arasındaki mantıksal uçurumları yakalar.
 - ⚔️ **VS Çarpışma Modu & İlişki Ömrü Kahini:** Özel link (`?c=`) üreterek sevgilinle veya arkadaşınla sınırlarını çarpıştırma, kan çıkacak kırmızı çizgileri görme, tahmini ilişki ömrünü ve ilk büyük kavga senaryosunu içeren VS posterini indirme imkânı.
 - 🎨 **6 Ortam Teması, 18 İsimli Renk & Perspektif Seçimi:** Atmosfer temaları, isimli boynuz renkleri, perspektif uyarlaması (Nötr, Kız Arkadaş veya Erkek Arkadaş) ve akıllı otomatik kaydırma.
-- 📤 **Çoklu Görsel Çıktı (Poster, 9:16 Story & Yatay Ehliyet):** Sonuçlarını 35 soruluk dev poster, 9:16 Instagram Story özet kartı veya üzerinde barkod, mühür ve dinamik QR kod bulunan yatay **Resmî Mezhep Ehliyeti** (PNG) olarak indirme.
+- 📤 **Çoklu Görsel Çıktı:** Sonuçlarını 35 soruluk dev poster veya 9:16 Instagram Story özet kartı olarak (PNG) indirme.
 - 💾 **Tamamen Yerel Depolama:** Tüm veriler yalnızca tarayıcında (`localStorage`) kalır.
 
 ## Kullanım
@@ -90,7 +90,7 @@ Built upon the single-file Canvas and archetype engine architecture developed fo
 2. ✍️ Adını/lakabını yaz, kimin için çözdüğünü (perspektif) seç, ortam temasını ve boynuz rengini özelleştir.
 3. 📋 Soruları 8'li argo ölçekle (`0–5`, `X` infaz sebebi, `?` kaypak zemin) puanla ve açılan şart etiketlerinden sana uyanları işaretle.
 4. 🪞 İstersen Adım 3.5'teki 3 soruluk Ayna Testi'ni yanıtlayarak posterine Çifte Standart damgası ekle.
-5. 💾 Dev posterini, 9:16 Story kartını veya yatay kimlik kartını indir; ya da çarpışma linkini kopyalayıp partnerine meydan oku.
+5. 💾 Dev posterini veya 9:16 Story kartını indir; ya da çarpışma linkini kopyalayıp partnerine meydan oku.
 
 ## Teknolojiler
 
