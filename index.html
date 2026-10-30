@@ -127,7 +127,7 @@
   .q.missing{background:rgba(255,30,66,.12);outline:2.5px solid var(--x);outline-offset:4px}
   .q canvas{width:76px;height:124px;display:block}
   .qnum{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.04em;display:flex;align-items:center;gap:8px}
-  .qbadge{display:none} /* Katsayı rozetleri arayüzden gizlendi */
+  .qbadge{font-size:10px;padding:2px 8px;border-radius:99px;background:var(--surface);border:1px solid var(--border);color:var(--ink);text-transform:uppercase;letter-spacing:.05em}
   .qlabel{font-family:var(--font-display);font-weight:600;font-size:22px;line-height:1.18;margin:4px 0 10px;color:var(--ink);letter-spacing:.01em;text-transform:uppercase}
   .qdesc{display:block;font-family:var(--font-body);font-size:14px;font-weight:400;font-style:italic;color:var(--muted);line-height:1.4;margin-top:3px;text-transform:none}
   .scale{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;max-width:420px}
@@ -292,7 +292,7 @@
   <header>
     <div class="header-top">
       <h1><span>Ne Kadar Gavatsın?</span></h1>
-      <nav class="social" aria-label="Sosyal medya bağlantıları">
+      <nav class="social" aria-label="Sosyal medya ve proje bağlantıları">
         <a href="https://tahabastug-arch.github.io/arzu-kavanozu/" target="_blank" rel="noopener noreferrer" aria-label="Arzu Kavanozu" title="Arzu Kavanozu">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2h6v3H9z"/><path d="M5 5h14v15a2 2 0 01-2 2H7a2 2 0 01-2-2V5z"/><path d="M9 10h6"/></svg>
         </a>
@@ -395,13 +395,8 @@
         <p class="status" id="status" role="alert" hidden></p>
         <button class="big" id="save" type="button">🖼️ Dev Poster İndir</button>
         <button class="story-btn" id="saveStory" type="button">📱 Story Kartı İndir (9:16 Özet)</button>
-        <button class="story-btn" id="saveIdCard" type="button">🪪 Mezhep Ehliyeti İndir (Yatay Kimlik)</button>
         <div class="clash-cta" id="clashCta" hidden>
           <button class="clash-btn" id="copyClashLink" type="button">⚔️ Sevgilinle / Kankanla Çarpıştır (Link Kopyala)</button>
-          <div class="modal-btn-row" style="margin: 4px 0">
-  <button class="ghost" id="shareWaClash" type="button" style="padding:10px;font-size:13px;border-color:#25D366;color:#25D366">📲 WhatsApp'ta Meydan Oku</button>
-  <button class="ghost" id="shareTwClash" type="button" style="padding:10px;font-size:13px;border-color:#3a86ff;color:#3a86ff">🐦 X'te Meydan Oku</button>
-</div>
           <button class="clash-sub-btn" id="openClashTester" type="button">🧪 VS Posterini Hemen Test Et / Link Yapıştır</button>
         </div>
         <div class="mode-cta" id="modeCta">
@@ -1154,6 +1149,7 @@ const SUMMARY_TEXTS = {
   basgavat: "Tebrikler, gavatlık nirvanasına ulaştın! Boynuzların tavana değiyor ama senin keyfin yerinde; paylaşımcı ve evrensel sevginin vücut bulmuş halisin."
 };
 
+/* ===== CİNSİYET / YÖNELİM PERSPEKTİFİ METİN UYARLAYICI ===== */
 function adaptText(str, persp) {
   const p = persp || state.perspective || "n";
   if (!str || p === "n") return str;
@@ -1207,6 +1203,7 @@ function computeSectionScores(targetState) {
   });
 }
 
+/* ===== ÇELİŞKİ / TUTARLILIK DEDEKTÖRÜ HESAPLAMA MOTORU ===== */
 function computeContradictions(targetState) {
   const ans = targetState.answers || [];
   const found = [];
@@ -1223,6 +1220,7 @@ function computeContradictions(targetState) {
   return found;
 }
 
+/* ===== ÇİFTE STANDART (İKİYÜZLÜLÜK) HESAPLAMA MOTORU ===== */
 function computeHypocrisy(targetState, gavatPct) {
   const m = Array.isArray(targetState.mirror) ? targetState.mirror : [null, null, null];
   const answered = m.filter(v => typeof v === "number");
@@ -1413,8 +1411,8 @@ const SUB_SIZE = 13, SUB_LINE_GAP = 3, SUB_GAP = 12;
 const CELL_BOTTOM_PAD = 62, ROW_MIN_H = 335;
 const COMPACT_MAX_H = 2400, SINGLE_MAX_H = 3450;
 
-const STORE = "ne-kadar-gavatsin-v8";
-const ONBOARD_KEY = "gavat-onboarded-v8";
+const STORE = "ne-kadar-gavatsin-v7";
+const ONBOARD_KEY = "gavat-onboarded-v7";
 const $ = id => document.getElementById(id);
 
 const hexToRgb = h => { h=String(h||"#f72585").replace("#",""); if (h.length===3) h=[...h].map(x=>x+x).join(""); const n=parseInt(h,16); return [n>>16&255, n>>8&255, n&255]; };
@@ -1778,42 +1776,7 @@ function drawRadarChart(c, cx, cy, radius, secScores1, rgb1, secScores2, rgb2) {
 
   c.restore();
 }
-function drawDynamicQR(c, x, y, size, dataStr) {
-  const N = 21; const pad = 8; const inner = size - pad * 2; const cell = inner / N;
-  c.save();
-  c.beginPath(); roundRect(c, x, y, size, size + 22, 10);
-  c.fillStyle = "#ffffff"; c.fill(); c.lineWidth = 2.5; c.strokeStyle = "#140e1c"; c.stroke();
-  const drawFinder = (r0, c0) => {
-    for (let r = 0; r < 7; r++) {
-      for (let col = 0; col < 7; col++) {
-        const border = r === 0 || r === 6 || col === 0 || col === 6;
-        const core = r >= 2 && r <= 4 && col >= 2 && col <= 4;
-        if (border || core) {
-          c.fillStyle = "#140e1c";
-          c.fillRect(x + pad + (c0 + col) * cell, y + pad + (r0 + r) * cell, Math.ceil(cell), Math.ceil(cell));
-        }
-      }
-    }
-  };
-  drawFinder(0, 0); drawFinder(0, N - 7); drawFinder(N - 7, 0);
-  let hash = 2166136261;
-  for (let i = 0; i < dataStr.length; i++) { hash ^= dataStr.charCodeAt(i); hash = Math.imul(hash, 16777619); }
-  const rand = rng(hash);
-  c.fillStyle = "#140e1c";
-  for (let r = 0; r < N; r++) {
-    for (let col = 0; col < N; col++) {
-      if ((r < 8 && col < 8) || (r < 8 && col >= N - 8) || (r >= N - 8 && col < 8)) continue;
-      if (r === 6 || col === 6) {
-        if ((r + col) % 2 === 0) c.fillRect(x + pad + col * cell, y + pad + r * cell, Math.ceil(cell), Math.ceil(cell));
-        continue;
-      }
-      if (rand() > 0.46) c.fillRect(x + pad + col * cell, y + pad + r * cell, Math.ceil(cell), Math.ceil(cell));
-    }
-  }
-  c.font = "700 11px 'Oswald', sans-serif"; c.fillStyle = "#140e1c"; c.textAlign = "center"; c.textBaseline = "alphabetic";
-  c.fillText("📱 ÇARPIŞMA KODU", x + size / 2, y + size + 15);
-  c.restore();
-}
+
 const TITLE_FONT = size => `600 ${size}px "Oswald", sans-serif`;
 const SUB_FONT = size => `500 ${size}px "Inter", sans-serif`;
 
@@ -2132,6 +2095,7 @@ function drawProfileBlock(c, profile) {
     y += mottoLines.length * 26 + 10;
   }
 
+  // Rozetler + Çifte Standart Damgası + Çelişki Dedektörü Damgası
   const allChips = [...profile.modalities];
   if (profile.contradictions && profile.contradictions.length) {
     allChips.unshift({ name: profile.contradictions[0].short, customColor: "#ff1e42" });
@@ -2236,10 +2200,7 @@ function drawPageContent(c, page, pageIndex, pageCount, cols) {
     }
   }
 
-    if (pageIndex === pageCount - 1) {
-    const clashUrl = location.origin + location.pathname + "?c=" + encodeStateToParam();
-    drawDynamicQR(c, PW - 150, H - 170, 110, clashUrl);
-    
+  if (pageIndex === pageCount - 1) {
     c.strokeStyle = isThemeLight() ? "rgba(0,0,0,.18)" : "rgba(255,255,255,.15)";
     c.lineWidth = 1.5;
     c.beginPath(); c.moveTo(80, H - 60); c.lineTo(PW - 80, H - 60); c.stroke();
@@ -2465,88 +2426,11 @@ function renderStoryCard() {
   c.font = "500 15px 'Inter', sans-serif";
   c.fillStyle = pc.muted;
   c.fillText(DISCLAIMER_TEXT, W / 2, H - 54);
-  const clashUrl = location.origin + location.pathname + "?c=" + encodeStateToParam();
-  drawDynamicQR(c, W - 160, H - 180, 120, clashUrl);
 
   return canvas;
 }
-  return canvas;
-}
 
-/* ===== ÇARPIŞMA (CLASH) MODU: İLİŞKİ ÖMRÜ KAHİNİ + ÇİFT RADARLI VS POSTERİ ===== */
-const FIGHT_SCENARIOS = {
-  0: "Gece yatakta karşı cinsin priv hesabından gelen bir story'nin yakalanmasıyla",
-  1: "Telefon galerisinde 'eski anı' diye tutulan tekil fotoğrafın ortaya çıkmasıyla",
-  2: "Instagram'da hâlâ silinmemiş eski flörtün bir gönderiyi beğenmesiyle",
-  3: "Plajdan atılan cesur bir story'nin altına düşen alev emojileriyle",
-  4: "Gece 01.45'te gelen yürümeli DM'ye 'ayıp olmasın' diye kibarca cevap verilmesiyle",
-  5: "Masada ters kapatılan telefonun şifresinin söylenmemesiyle",
-  6: "'Dolar kazanıyoruz aşkım' diyerek gizlice ayak fotoğrafı satıldığının öğrenilmesiyle",
-  7: "Karanlık sinema salonunda karşı cins kankayla baş başa film izlenirken",
-  8: "Mekanda yeni tanışılan karşı cinsle muhabbetin biraz fazla koyulaşmasıyla",
-  9: "AVM'de karşı cins kankayla soyunma kabini önünde kombin seçilirken",
-  10: "Gece 02.30'da kulüpten 'şarjım bitiyor' mesajı atılıp sabaha kadar dönülmemesiyle",
-  11: "Karşı cins kankayla baş başa çıkılan gecede ikisinin de sarhoş olmasıyla",
-  12: "Karşı cins arkadaşın evine 'sadece film izleyeceğiz' diye gidilmesiyle",
-  13: "Gece geç saatte karşı cins iş/okul arkadaşının arabasıyla eve bırakılırken",
-  14: "Şehir dışı gezisinde 'başka oda kalmamış' denilerek aynı odada kalınmasıyla",
-  15: "Buluşmada karşı cins arkadaşla biraz fazla uzun ve sıkı sarılınmasıyla",
-  16: "Masada karşı cins arkadaşın bardağından/sigarasından bir fırt alınmasıyla",
-  17: "Restoranda karşı cins arkadaşın 'şunun tadına bak' diye eliyle lokma uzatmasıyla",
-  18: "Spa'da veya tatilde karşı cinsten birine yağlı masaj yaptırılmasıyla",
-  19: "Temmuz ayında plajda karşı cins kankaya güneş kremi sürdürülürken şezlongların uçuşmasıyla",
-  20: "Ev oturmasında karşı cins yakın arkadaşın dizine yatıp saç okşatılmasıyla",
-  21: "Dışarı çıkarken giyilen iddialı kıyafete 'böyle çıkamazsın' denilmesiyle",
-  22: "Sokakta yürürken yan masadan birinin uzun uzun kesmesiyle",
-  23: "Telefonda karşı cins arkadaşa 'tamam bebeğim/aşkım' denilmesiyle",
-  24: "Eve karşı cins arkadaşın parfümü sinmiş sweatshirt'le gelinmesiyle",
-  25: "Etkinlik öncesi karşı cins arkadaşla burun buruna makyaj yapılırken",
-  26: "Eğlence mekanında dansöz/zenne oynarken veya karşı cinsle dans edilirken",
-  27: "Oyun veya tiyatro provasında 'rol icabı' yakınlaşma sahnesiyle",
-  28: "Eski sevgilinin aldığı hediyenin hâlâ aktif kullanıldığının fark edilmesiyle",
-  29: "Eski sevgiliyle 'artık tamamen kankayız' denilerek kahve içilmesiyle",
-  30: "Eski sevgilinin düğününe/doğum gününe gitme ısrarıyla",
-  31: "Gün boyu haber vermeden takılıp akşam 'görmemişim' denilmesiyle",
-  32: "Karşı cinsten 'en yakın sırdaş'a ilişki mahreminin anlatılmasıyla",
-  33: "Gece yarılarına kadar karşı cinsin aşk acısını teselli etme mesaisiyle",
-  34: "Yolda tanımadığı karşı cinse fazla kibar davranıp kapı tutmasıyla"
-};
-
-function predictRelationshipOracle(harmony, deadlocks, s1, s2) {
-  let lifespan = "";
-  if (harmony >= 82 && deadlocks.length === 0) {
-    lifespan = "💍 Ömürlük (Nikah Masası & Altın Yastık)";
-  } else if (harmony >= 65) {
-    lifespan = "🌿 1.5 – 2 Yıl (İlk yaz tatili dönüşüne kadar)";
-  } else if (harmony >= 48) {
-    lifespan = "🍂 4 – 5 Ay (Mevsim geçişini görmez)";
-  } else if (harmony >= 30) {
-    lifespan = "🧨 3 Hafta (İlk maaş gününe yetişmez)";
-  } else {
-    lifespan = "🚓 48 Saat (İlk buluşma çıkışı karakolluk)";
-  }
-
-  let triggerIdx = 19;
-  if (deadlocks.length > 0) {
-    const sorted = [...deadlocks].sort((a, b) => b.w - a.w);
-    triggerIdx = sorted[0].idx;
-  } else {
-    let maxDiff = -1;
-    for (let i = 0; i < N_CATS; i++) {
-      const a = s1.answers[i], b = s2.answers[i];
-      if (a === null || b === null) continue;
-      const d = Math.abs(answerToGavatSignal(a) - answerToGavatSignal(b)) * (CATEGORIES[i].w || 2);
-      if (d > maxDiff) { maxDiff = d; triggerIdx = i; }
-    }
-  }
-
-  const scenario = FIGHT_SCENARIOS[triggerIdx] || "Sosyal medyada yapılan yersiz bir beğeniyle";
-  return {
-    lifespan,
-    firstFight: `İlk büyük kıyamet; ${scenario.toLowerCase()} kopacak!`
-  };
-}
-
+/* ===== ÇARPIŞMA (CLASH) MODU: ÇİFT RADARLI VS POSTERİ ===== */
 function calculateClash(s1, s2) {
   let deadlocks = [];
   let bothChill = [];
@@ -2574,12 +2458,11 @@ function calculateClash(s1, s2) {
   }
   const diff = Math.abs(p1.gavatPct - p2.gavatPct);
   const harmony = Math.max(8, Math.min(99, Math.round(100 - diff * 0.7 - deadlocks.length * 6)));
-  const oracle = predictRelationshipOracle(harmony, deadlocks, s1, s2);
-  return { p1, p2, sec1, sec2, harmony, deadlocks, bothChill, bothCave, oracle };
+  return { p1, p2, sec1, sec2, harmony, deadlocks, bothChill, bothCave };
 }
 
 function renderClashPoster(s1, s2) {
-  const W = 1200, H = 1940; // İlişki Ömrü Kahini kutusu eklendiği için yükseklik artırıldı
+  const W = 1200, H = 1660;
   const canvas = document.createElement("canvas");
   canvas.width = W; canvas.height = H;
   const c = canvas.getContext("2d");
@@ -2678,29 +2561,6 @@ function renderClashPoster(s1, s2) {
   c.fillText(clash.harmony >= 75 ? "RUH İKİZİ" : clash.harmony >= 45 ? "İDARE EDER" : "KAN ÇIKAR", cx, cy + 54);
 
   let yCursor = heroY + heroH + 30;
-
-  // İLİŞKİ ÖMRÜ & İLK KAVGA KAHİNİ KUTUSU
-  const oracleBoxH = 145;
-  c.beginPath(); roundRect(c, 70, yCursor, W - 140, oracleBoxH, 20);
-  c.fillStyle = "rgba(255,183,3,0.14)"; c.fill();
-  c.lineWidth = 2.5; c.strokeStyle = "#ffb703"; c.stroke();
-
-  c.textAlign = "left";
-  c.font = "700 22px 'Oswald', sans-serif";
-  c.fillStyle = "#ffb703";
-  c.fillText("🔮 İLİŞKİ ÖMRÜ & İLK KAVGA KAHİNİ", 98, yCursor + 38);
-
-  c.font = "700 20px 'Oswald', sans-serif";
-  c.fillStyle = pc.ink;
-  c.fillText(clash.oracle.lifespan, 98, yCursor + 74);
-
-  c.font = "500 17px 'Inter', sans-serif";
-  c.fillStyle = pc.sub;
-  const oracleLines = wrapText(c, clash.oracle.firstFight, W - 200).slice(0, 2);
-  oracleLines.forEach((ol, oi) => c.fillText(ol, 98, yCursor + 104 + oi * 22));
-
-  yCursor += oracleBoxH + 24;
-
   const secH = 330;
   c.beginPath(); roundRect(c, 70, yCursor, W - 140, secH, 22);
   c.fillStyle = pc.cardBg; c.fill();
@@ -2858,6 +2718,13 @@ LEGEND_ITEMS.forEach(item => {
 });
 $("pIntroIcons").innerHTML = `<span style="width:20px;height:20px;display:inline-flex;color:var(--x);opacity:.95">${svgIcon("x")}</span><span style="width:20px;height:20px;display:inline-flex;color:var(--q);opacity:.95">${svgIcon("?")}</span>`;
 
+function weightBadgeText(w) {
+  if (w >= 3) return "🔥 Ağır Kriz (x3)";
+  if (w >= 2.5) return "⚡ Yüksek Risk (x2.5)";
+  if (w >= 2) return "⚖️ Orta Eşik (x2)";
+  return "🌱 Temel Eşik (x1)";
+}
+
 function buildMirrorUI() {
   const grid = $("mirrorGrid");
   grid.innerHTML = "";
@@ -2911,6 +2778,7 @@ function buildQuestions() {
         <div>
           <div class="qnum">
             <span>SORU ${displayIdx + 1} / ${activeList.length}</span>
+            <span class="qbadge">${weightBadgeText(cat.w)}</span>
           </div>
           <div class="qlabel"><span class="qtitle-txt">${adaptedTitle}</span> <span class="qdesc">${adaptedDesc}</span></div>
           <div class="scale" role="group" aria-label="${adaptedTitle}">
@@ -3151,7 +3019,7 @@ function burstSparkles() {
   })(t0);
 }
 
-/* ===== ÖZELLİK 3 (GÜNCELLENDİ): DİĞER TESTLERE YÖNLENDİRME BUTONLARI EKLENDİ ===== */
+/* ===== POP-UP İÇİNDE DİĞER TESTLERE YÖNLENDİRME BÖLÜMÜ ===== */
 function crossPromoHTML() {
   return `
     <div style="margin-top:18px;padding-top:16px;border-top:2px dashed var(--line);text-align:center">
@@ -3419,136 +3287,6 @@ async function saveStoryCard() {
 }
 
 function showSingleModal(url, titleText, downloadName) {
-  function renderIdCard() {
-  const W = 1000, H = 600;
-  const canvas = document.createElement("canvas");
-  canvas.width = W; canvas.height = H;
-  const c = canvas.getContext("2d");
-  const t = COSMIC_THEMES[state.theme || "pavyon"];
-  const pc = posterColors();
-  const rgb = hexToRgb(state.color);
-  const profile = computeProfile(state);
-  const extremes = getExtremeItems(state);
-  const clashUrl = location.origin + location.pathname + "?c=" + encodeStateToParam();
-
-  c.fillStyle = t.posterBg;
-  c.fillRect(0, 0, W, H);
-  drawDynamicBackground(c, W, H, profile.gavatPct);
-
-  c.lineWidth = 4; c.strokeStyle = css(rgb);
-  c.beginPath(); roundRect(c, 20, 20, W - 40, H - 40, 26); c.stroke();
-
-  // Üst Bant
-  c.save();
-  c.beginPath(); roundRect(c, 20, 20, W - 40, 78, 24);
-  c.fillStyle = css(rgb, 0.22); c.fill();
-  c.restore();
-
-  // Başlık Çakışması Düzeltildi
-  c.textAlign = "left"; c.textBaseline = "alphabetic";
-  c.font = "700 24px 'Oswald', sans-serif";
-  c.fillStyle = pc.ink;
-  c.fillText("MEZHEP & KISKANÇLIK LABORATUVARI — RESMÎ VİZE BELGESİ", 48, 65);
-
-  // Seri No Çakışması Düzeltildi
-  const seedNum = Math.abs((state.name || "ANON").split("").reduce((a, ch) => a + ch.charCodeAt(0) * 37, 2026) + profile.gavatPct * 97) % 9000 + 1000;
-  c.textAlign = "right";
-  c.font = "700 18px 'Oswald', sans-serif";
-  c.fillStyle = "#ffb703";
-  c.fillText(`BELGE NO: MK-2026-${seedNum}`, W - 48, 95);
-
-  // Sol Kutu
-  const leftX = 48, leftY = 122, leftW = 230, leftH = 340;
-  c.beginPath(); roundRect(c, leftX, leftY, leftW, leftH, 20);
-  c.fillStyle = pc.cardBg; c.fill();
-  c.lineWidth = 2.5; c.strokeStyle = pc.cardBorder; c.stroke();
-
-  c.save();
-  c.translate(leftX + 52, leftY + 26); c.scale(1.3, 1.3);
-  const sampleAns = profile.gavatPct >= 80 ? 5 : profile.gavatPct >= 60 ? 4 : profile.gavatPct >= 40 ? 3 : profile.gavatPct >= 20 ? 1 : 0;
-  drawJar(c, 5, sampleAns, rgb);
-  c.restore();
-
-  const bcY = leftY + 265, bcX = leftX + 24, bcW = leftW - 48;
-  const bcRand = rng(seedNum);
-  c.fillStyle = pc.ink;
-  for (let bx = 0; bx < bcW; bx += 5) { c.fillRect(bcX + bx, bcY, bcRand() > 0.5 ? 3 : 1.5, 38); }
-  c.textAlign = "center"; c.font = "600 13px 'Inter', monospace"; c.fillStyle = pc.muted;
-  c.fillText(`*MK-${seedNum}-${profile.gavatPct}*`, leftX + leftW / 2, bcY + 56);
-
-  // Sağ Bilgiler
-  const infoX = 310;
-  c.textAlign = "left"; c.font = "600 15px 'Oswald', sans-serif"; c.fillStyle = pc.muted;
-  c.fillText("KART SAHİBİ / LAKABI", infoX, 145);
-
-  c.font = "700 38px 'Oswald', sans-serif"; c.fillStyle = pc.ink;
-  c.fillText((state.name.trim() || "ANONİM VATANDAŞ").toUpperCase(), infoX, 185);
-
-  // Yüzde Çakışması Düzeltildi (QR sola kaydırıldığı için sağa çektik)
-  c.font = "700 50px 'Oswald', sans-serif"; c.fillStyle = css(rgb); c.textAlign = "right";
-  c.fillText(`%${profile.gavatPct} GAVAT`, W - 180, 185);
-
-  c.textAlign = "left"; c.font = "600 15px 'Oswald', sans-serif"; c.fillStyle = pc.muted;
-  c.fillText("TESCİLLİ MEZHEP ARKETİPİ", infoX, 228);
-  c.font = "700 26px 'Oswald', sans-serif"; c.fillStyle = "#ffb703";
-  c.fillText(profile.main.name.toUpperCase(), infoX, 260);
-
-  c.font = "600 15px 'Oswald', sans-serif"; c.fillStyle = pc.muted;
-  c.fillText("ADALET & SABIKA KAYDI", infoX, 304);
-  const hypTxt = profile.hypocrisy ? profile.hypocrisy.shortStamp : "⚖️ Standart Terazi (Ayna Testi Çözülmedi)";
-  c.font = "700 21px 'Oswald', sans-serif"; c.fillStyle = pc.ink;
-  c.fillText(hypTxt, infoX, 332);
-
-  c.font = "600 15px 'Oswald', sans-serif"; c.fillStyle = pc.muted;
-  c.fillText("BİRİNCİ DERECE İNFAZ SEBEBİ (KIRMIZI ÇİZGİ)", infoX, 374);
-
-  const topRed = extremes.redFlags[0] ? `${extremes.redFlags[0].title} (${String(extremes.redFlags[0].ans).toUpperCase()})` : "Yok (Tam Serbest Dolaşım Vizesi)";
-  c.font = "700 21px 'Oswald', sans-serif"; c.fillStyle = "#ff4d6d";
-  c.fillText(topRed, infoX, 402);
-
-  // Alt Terazi
-  drawDSBar(c, profile.ds, 515, W - 140, 620);
-
-  // QR Kod Sağ Alt Köşeye Alındı
-  drawDynamicQR(c, W - 150, H - 150, 100, clashUrl);
-
-  // Mühür Çakışması Düzeltildi (Yukarı alındı)
-  c.save();
-  c.translate(W - 200, 390); c.rotate(-0.22);
-  c.strokeStyle = "#2ec4b6"; c.lineWidth = 3.5;
-  c.beginPath(); roundRect(c, -95, -34, 190, 68, 12); c.stroke();
-  c.lineWidth = 1.5; c.beginPath(); roundRect(c, -89, -28, 178, 56, 8); c.stroke();
-  c.textAlign = "center"; c.font = "700 19px 'Oswald', sans-serif"; c.fillStyle = "#2ec4b6";
-  c.fillText("✓ MEZHEBİ TESCİLLİDİR", 0, -2);
-  c.font = "700 13px 'Oswald', sans-serif"; c.fillText("RESMÎ ONAYLI BELGE", 0, 18);
-  c.restore();
-
-  return canvas;
-}
-
-async function saveIdCardPoster() {
-  if (!ensureAllAnsweredOrScroll()) return;
-  try {
-    const canvas = renderIdCard();
-    await exportCanvasAndShowModal(canvas, fileBase() + "-kimlik-karti.png", "🪪 Yatay Mezhep Ehliyetin Hazır!");
-  } catch (e) { console.error(e); toast("Kimlik kartı oluşturulamadı."); }
-}
-
-function buildChallengeText() {
-  const prof = computeProfile(state);
-  const param = encodeStateToParam();
-  const url = location.origin + location.pathname + "?c=" + param;
-  return `Ne Kadar Gavatsın? testinde %${prof.gavatPct} (${prof.main.name}) çıktım! 🦌🔥 Benim sınırlarla kapışmaya cesaretin varsa linke tıkla, VS posterimizi ve tahmini ilişki ömrümüzü görelim: ${url}`;
-}
-
-function shareChallenge(platform) {
-  if (!ensureAllAnsweredOrScroll()) return;
-  const text = buildChallengeText();
-  const targetUrl = platform === "wa" ? "https://wa.me/?text=" + encodeURIComponent(text) : "https://twitter.com/intent/tweet?text=" + encodeURIComponent(text);
-  window.open(targetUrl, "_blank", "noopener,noreferrer");
-}
-
-function showSingleModal(url, titleText, downloadName) { // <-- ESKİ KODUN BAŞLANGICI (Bunu silme, sadece üsttekileri ekle)
   $("mt").textContent = titleText || "Mezhep Raporun Hazır!";
   const body = $("modalBody");
   body.innerHTML = "";
@@ -3682,9 +3420,6 @@ if (!localStorage.getItem(ONBOARD_KEY) && !clashParam) { showOnboarding(); }
 $("save").onclick = save;
 $("saveBar").onclick = save;
 $("saveStory").onclick = saveStoryCard;
-  $("saveIdCard").onclick = saveIdCardPoster;
-$("shareWaClash").onclick = () => shareChallenge("wa");
-$("shareTwClash").onclick = () => shareChallenge("tw");
 $("saveStoryBar").onclick = saveStoryCard;
 $("closeModal").onclick = () => { $("modal").hidden = true; };
 $("modal").addEventListener("click", e => { if (e.target.id === "modal") $("modal").hidden = true; });
@@ -3717,302 +3452,7 @@ if (document.fonts && document.fonts.ready) {
   document.fonts.ready.then(() => { render(); }).catch(() => {});
 }
 </script>
-<script>
-/* ===== PAKET 2 EKLENTİSİ: WHATSAPP/X MEYDAN OKUMA + YATAY KİMLİK KARTI + DİNAMİK QR KOD ===== */
-(function initRemainingFeatures() {
-  // 1. Sağ Panele "Yatay Mezhep Ehliyeti İndir" Butonunu Ekle
-  const storyBtn = document.getElementById("saveStory");
-  if (storyBtn && !document.getElementById("saveIdCard")) {
-    const idBtn = document.createElement("button");
-    idBtn.type = "button";
-    idBtn.id = "saveIdCard";
-    idBtn.className = "story-btn";
-    idBtn.innerHTML = "🪪 Mezhep Ehliyeti İndir (Yatay Kimlik)";
-    storyBtn.insertAdjacentElement("afterend", idBtn);
-    idBtn.onclick = saveIdCardPoster;
-  }
 
-  // 2. Çarpışma Alanına WhatsApp ve X (Twitter) Hazır Meydan Okuma Butonlarını Ekle
-  const clashCta = document.getElementById("clashCta");
-  const copyBtn = document.getElementById("copyClashLink");
-  if (clashCta && copyBtn && !document.getElementById("shareWaClash")) {
-    const row = document.createElement("div");
-    row.className = "modal-btn-row";
-    row.style.margin = "4px 0";
-    row.innerHTML = `
-      <button class="ghost" id="shareWaClash" type="button" style="padding:10px;font-size:13px;border-color:#25D366;color:#25D366">📲 WhatsApp'ta Meydan Oku</button>
-      <button class="ghost" id="shareTwClash" type="button" style="padding:10px;font-size:13px;border-color:#3a86ff;color:#3a86ff">🐦 X'te Meydan Oku</button>
-    `;
-    copyBtn.insertAdjacentElement("afterend", row);
-
-    document.getElementById("shareWaClash").onclick = () => shareChallenge("wa");
-    document.getElementById("shareTwClash").onclick = () => shareChallenge("tw");
-  }
-
-  function buildChallengeText() {
-    const prof = computeProfile(state);
-    const param = encodeStateToParam();
-    const url = location.origin + location.pathname + "?c=" + param;
-    return `Ne Kadar Gavatsın? testinde %${prof.gavatPct} Gavat (${prof.main.name}) çıktım! 🦌🔥 Benim sınırlarla kapışmaya cesaretin varsa linke tıkla, VS posterimizi ve tahmini ilişki ömrümüzü görelim: ${url}`;
-  }
-
-  function shareChallenge(platform) {
-    if (!ensureAllAnsweredOrScroll()) return;
-    const text = buildChallengeText();
-    const targetUrl = platform === "wa"
-      ? "https://wa.me/?text=" + encodeURIComponent(text)
-      : "https://twitter.com/intent/tweet?text=" + encodeURIComponent(text);
-    window.open(targetUrl, "_blank", "noopener,noreferrer");
-  }
-
-  // 3. Harici Kütüphanesiz Dinamik QR Matris Çizici (21x21 Standart QR Geometrisi)
-  function drawDynamicQR(c, x, y, size, dataStr) {
-    const N = 21;
-    const pad = 8;
-    const inner = size - pad * 2;
-    const cell = inner / N;
-
-    c.save();
-    c.beginPath();
-    roundRect(c, x, y, size, size + 22, 10);
-    c.fillStyle = "#ffffff";
-    c.fill();
-    c.lineWidth = 2.5;
-    c.strokeStyle = "#140e1c";
-    c.stroke();
-
-    // 7x7 Köşe Finder Pattern Çizici
-    const drawFinder = ( r0, c0 ) => {
-      for (let r = 0; r < 7; r++) {
-        for (let col = 0; col < 7; col++) {
-          const border = r === 0 || r === 6 || col === 0 || col === 6;
-          const core = r >= 2 && r <= 4 && col >= 2 && col <= 4;
-          if (border || core) {
-            c.fillStyle = "#140e1c";
-            c.fillRect(x + pad + (c0 + col) * cell, y + pad + (r0 + r) * cell, Math.ceil(cell), Math.ceil(cell));
-          }
-        }
-      }
-    };
-
-    drawFinder(0, 0);
-    drawFinder(0, N - 7);
-    drawFinder(N - 7, 0);
-
-    // URL Verisinden Deterministik Bit Matrisi
-    let hash = 2166136261;
-    for (let i = 0; i < dataStr.length; i++) {
-      hash ^= dataStr.charCodeAt(i);
-      hash = Math.imul(hash, 16777619);
-    }
-    const rand = rng(hash);
-
-    c.fillStyle = "#140e1c";
-    for (let r = 0; r < N; r++) {
-      for (let col = 0; col < N; col++) {
-        // Finder ve ayırıcı bölgeleri atla
-        if ((r < 8 && col < 8) || (r < 8 && col >= N - 8) || (r >= N - 8 && col < 8)) continue;
-        // Timing çizgileri
-        if (r === 6 || col === 6) {
-          if ((r + col) % 2 === 0) {
-            c.fillRect(x + pad + col * cell, y + pad + r * cell, Math.ceil(cell), Math.ceil(cell));
-          }
-          continue;
-        }
-        if (rand() > 0.46) {
-          c.fillRect(x + pad + col * cell, y + pad + r * cell, Math.ceil(cell), Math.ceil(cell));
-        }
-      }
-    }
-
-    c.font = "700 11px 'Oswald', sans-serif";
-    c.fillStyle = "#140e1c";
-    c.textAlign = "center";
-    c.textBaseline = "alphabetic";
-    c.fillText("📱 ÇARPIŞMA KODU", x + size / 2, y + size + 15);
-    c.restore();
-  }
-
-  // Mevcut Story Kartı Fonksiyonuna QR Kodu Entegre Et
-  const _origRenderStory = window.renderStoryCard;
-  if (typeof _origRenderStory === "function") {
-    window.renderStoryCard = function() {
-      const cv = _origRenderStory();
-      const c = cv.getContext("2d");
-      const clashUrl = location.origin + location.pathname + "?c=" + encodeStateToParam();
-      drawDynamicQR(c, cv.width - 156, 70, 96, clashUrl);
-      return cv;
-    };
-  }
-
-  // Mevcut Dev Poster Fonksiyonuna QR Kodu Entegre Et
-  const _origRenderPage = window.renderPage;
-  if (typeof _origRenderPage === "function") {
-    window.renderPage = function(page, index, count, scale, cols) {
-      const cv = _origRenderPage(page, index, count, scale, cols);
-      if (index === 0) {
-        const c = cv.getContext("2d");
-        c.save();
-        c.setTransform(scale, 0, 0, scale, 0, 0);
-        const clashUrl = location.origin + location.pathname + "?c=" + encodeStateToParam();
-        drawDynamicQR(c, PW - 165, 58, 96, clashUrl);
-        c.restore();
-      }
-      return cv;
-    };
-  }
-
-  // 4. Yatay "Mezhep Kimlik Kartı / Vize Belgesi" (1000x600 PNG) Üretici
-  window.renderIdCard = function() {
-    const W = 1000, H = 600;
-    const canvas = document.createElement("canvas");
-    canvas.width = W; canvas.height = H;
-    const c = canvas.getContext("2d");
-
-    const t = COSMIC_THEMES[state.theme || "pavyon"];
-    const pc = posterColors();
-    const rgb = hexToRgb(state.color);
-    const profile = computeProfile(state);
-    const extremes = getExtremeItems(state);
-    const clashUrl = location.origin + location.pathname + "?c=" + encodeStateToParam();
-
-    // Zemin ve Dinamik Arka Plan
-    c.fillStyle = t.posterBg;
-    c.fillRect(0, 0, W, H);
-    drawDynamicBackground(c, W, H, profile.gavatPct);
-
-    // Dış Kart Çerçevesi
-    c.lineWidth = 4;
-    c.strokeStyle = css(rgb);
-    c.beginPath(); roundRect(c, 20, 20, W - 40, H - 40, 26); c.stroke();
-
-    // Üst Resmî Başlık Şeridi
-    c.save();
-    c.beginPath(); roundRect(c, 20, 20, W - 40, 78, 24);
-    c.fillStyle = css(rgb, 0.22); c.fill();
-    c.restore();
-
-    c.textAlign = "left"; c.textBaseline = "alphabetic";
-    c.font = "700 28px 'Oswald', sans-serif";
-    c.fillStyle = pc.ink;
-    c.fillText("🪪 T.C. MEZHEP & KISKANÇLIK LABORATUVARI — RESMÎ VİZE BELGESİ", 48, 68);
-
-    // Seri Numarası
-    const seedNum = Math.abs((state.name || "ANON").split("").reduce((a, ch) => a + ch.charCodeAt(0) * 37, 2026) + profile.gavatPct * 97) % 9000 + 1000;
-    c.textAlign = "right";
-    c.font = "700 20px 'Oswald', sans-serif";
-    c.fillStyle = "#ffb703";
-    c.fillText(`BELGE NO: MK-2026-${seedNum}`, W - 48, 68);
-
-    // Sol Vesikalık / Sembol Kutusu + Barkod
-    const leftX = 48, leftY = 122, leftW = 230, leftH = 340;
-    c.beginPath(); roundRect(c, leftX, leftY, leftW, leftH, 20);
-    c.fillStyle = pc.cardBg; c.fill();
-    c.lineWidth = 2.5; c.strokeStyle = pc.cardBorder; c.stroke();
-
-    c.save();
-    c.translate(leftX + 52, leftY + 26);
-    c.scale(1.3, 1.3);
-    const sampleAns = profile.gavatPct >= 80 ? 5 : profile.gavatPct >= 60 ? 4 : profile.gavatPct >= 40 ? 3 : profile.gavatPct >= 20 ? 1 : 0;
-    drawJar(c, 5, sampleAns, rgb);
-    c.restore();
-
-    // Barkod Çizgileri
-    const bcY = leftY + 265, bcX = leftX + 24, bcW = leftW - 48;
-    const bcRand = rng(seedNum);
-    c.fillStyle = pc.ink;
-    for (let bx = 0; bx < bcW; bx += 5) {
-      const w = bcRand() > 0.5 ? 3 : 1.5;
-      c.fillRect(bcX + bx, bcY, w, 38);
-    }
-    c.textAlign = "center";
-    c.font = "600 13px 'Inter', monospace";
-    c.fillStyle = pc.muted;
-    c.fillText(`*MK-${seedNum}-${profile.gavatPct}*`, leftX + leftW / 2, bcY + 56);
-
-    // Sağ Kimlik Bilgileri Alanı
-    const infoX = 310;
-    c.textAlign = "left";
-    c.font = "600 15px 'Oswald', sans-serif";
-    c.fillStyle = pc.muted;
-    c.fillText("KART SAHİBİ / LAKABI", infoX, 145);
-
-    c.font = "700 38px 'Oswald', sans-serif";
-    c.fillStyle = pc.ink;
-    c.fillText((state.name.trim() || "ANONİM VATANDAŞ").toUpperCase(), infoX, 185);
-
-    // Dev Yüzde Rozeti
-    c.font = "700 62px 'Oswald', sans-serif";
-    c.fillStyle = css(rgb);
-    c.fillText(`%${profile.gavatPct} GAVAT`, infoX + 340, 185);
-
-    // Arketip Sınıfı
-    c.font = "600 15px 'Oswald', sans-serif";
-    c.fillStyle = pc.muted;
-    c.fillText("TESCİLLİ MEZHEP ARKETİPİ", infoX, 228);
-
-    c.font = "700 28px 'Oswald', sans-serif";
-    c.fillStyle = "#ffb703";
-    c.fillText(profile.main.name.toUpperCase(), infoX, 260);
-
-    // Çifte Standart ve Sabıka Kaydı
-    c.font = "600 15px 'Oswald', sans-serif";
-    c.fillStyle = pc.muted;
-    c.fillText("ADALET & SABIKA KAYDI", infoX, 304);
-
-    const hypTxt = profile.hypocrisy ? profile.hypocrisy.shortStamp : "⚖️ Standart Terazi (Ayna Testi Çözülmedi)";
-    c.font = "700 21px 'Oswald', sans-serif";
-    c.fillStyle = pc.ink;
-    c.fillText(hypTxt, infoX, 332);
-
-    // En Keskin Kırmızı Çizgi
-    c.font = "600 15px 'Oswald', sans-serif";
-    c.fillStyle = pc.muted;
-    c.fillText("BİRİNCİ DERECE İNFAZ SEBEBİ (KIRMIZI ÇİZGİ)", infoX, 374);
-
-    const topRed = extremes.redFlags[0] ? `${extremes.redFlags[0].title} (${String(extremes.redFlags[0].ans).toUpperCase()})` : "Yok (Tam Serbest Dolaşım Vizesi)";
-    c.font = "700 21px 'Oswald', sans-serif";
-    c.fillStyle = "#ff4d6d";
-    c.fillText(topRed, infoX, 402);
-
-    // Alt Terazi Çubuğu
-    drawDSBar(c, profile.ds, 515, W - 140, 620);
-
-    // Sağ Üst QR Kod
-    drawDynamicQR(c, W - 150, 122, 102, clashUrl);
-
-    // Sağ Alt Eğik Resmî Mühür ("MEZHEBİ TESCİLLİDİR")
-    c.save();
-    c.translate(W - 155, 370);
-    c.rotate(-0.22);
-    c.strokeStyle = "#2ec4b6";
-    c.lineWidth = 3.5;
-    c.beginPath(); roundRect(c, -95, -34, 190, 68, 12); c.stroke();
-    c.lineWidth = 1.5;
-    c.beginPath(); roundRect(c, -89, -28, 178, 56, 8); c.stroke();
-    c.textAlign = "center";
-    c.font = "700 19px 'Oswald', sans-serif";
-    c.fillStyle = "#2ec4b6";
-    c.fillText("✓ MEZHEBİ TESCİLLİDİR", 0, -2);
-    c.font = "700 13px 'Oswald', sans-serif";
-    c.fillText("RESMÎ ONAYLI BELGE", 0, 18);
-    c.restore();
-
-    return canvas;
-  };
-
-  async function saveIdCardPoster() {
-    if (!ensureAllAnsweredOrScroll()) return;
-    try {
-      const canvas = window.renderIdCard();
-      await exportCanvasAndShowModal(canvas, fileBase() + "-kimlik-karti.png", "🪪 Yatay Mezhep Ehliyetin Hazır!");
-    } catch (e) {
-      console.error(e);
-      toast("Kimlik kartı oluşturulamadı.");
-    }
-  }
-})();
-</script>
-  <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "636d154a3d51408eac85a7e3bb262c97"}'></script><!-- End Cloudflare Web Analytics -->
+ <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "636d154a3d51408eac85a7e3bb262c97"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
